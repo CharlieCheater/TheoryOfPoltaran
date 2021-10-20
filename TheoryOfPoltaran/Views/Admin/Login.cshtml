@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Авторизация";
+   
+
+}
+@model TheoryOfPoltaran.ViewModels.LoginModel
+<div class="col-md-6">
+    <h3 style="text-align:center">Стой приятель, это фейсконтроль!</h3>
+    <hr />
+    <form asp-action="Login" asp-controller="Admin" asp-anti-forgery="true">
+        <div class="validation" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <div class="control-label">
+                <h4>Логин</h4>
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <input class="form-control bg-dark text-light" placeholder="Логин" type="text" asp-for="Login" />
+                        <span asp-validation-for="Login" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-label">
+                <h4>Пароль</h4>
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <input class="form-control bg-dark text-light" placeholder="Пароль" type="password" asp-for="Password" />
+                        <span asp-validation-for="Password" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Войти" class="btn btn-outline-dark" />
+        </div>
+    </form>
+</div>

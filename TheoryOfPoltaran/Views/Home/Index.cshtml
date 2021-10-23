@@ -1,10 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Главная";
 }
+<link rel="stylesheet" href="~/lib/bootstrap-social-5.1.1/bootstrap-social.css" />
+<link rel="stylesheet" href="~/lib/bootstrap-social-5.1.1/assets/css/font-awesome.css" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 <div class="text-center">
     <h1 style="font-family: NewAcademy" class="display-4">Theory of Poltaran</h1>
     <a class="btn btn-danger" style="padding: 10px 25px;" href="https://store.steampowered.com/app/1737640/Theory_of_Poltaran/">Купить</a>
-    
+
     <div class="row" style="margin-top:20px;">
         <div class="col-md-2">
         </div>
@@ -54,8 +57,25 @@
         </div>
         <div class="col-md-2">
         </div>
-        
+
     </div>
+    <hr />
+    <a href="https://vk.com/styluagames" class="btn btn-social-icon btn-social btn-vk">
+        <i class="fa fa-vk"></i>
+    </a>
+    <a href="https://www.instagram.com/styluagames/" class="btn btn-social-icon btn-social btn-instagram">
+        <i class="fa fa-instagram"></i>
+    </a>
+    <a href="https://www.youtube.com/channel/UCLlSRyQJdjZxtrYcyX6k-zg" class="btn btn-social-icon btn-social btn-danger">
+        <i class="fa fa-youtube"></i>
+    </a>
+    <a href="https://www.facebook.com/Stylua-Games-363567771448505" class="btn btn-social-icon btn-social btn-facebook">
+        <i class="fa fa-facebook"></i>
+    </a>
+    <a href="https://twitter.com/StyluaGames" class="btn btn-social-icon btn-social btn-twitter">
+        <i class="fa fa-twitter"></i>
+    </a>
+
 </div>
 <style>
     .thumb-wrap {
@@ -82,7 +102,7 @@
     <script>
         var myCarousel = document.querySelector('#mainCarousel')
         var carousel = new bootstrap.Carousel(myCarousel, {
-            interval: 2000,
+            interval: 5000,
             wrap: false,
             touch: true
         })

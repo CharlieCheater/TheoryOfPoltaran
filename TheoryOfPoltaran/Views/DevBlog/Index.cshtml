@@ -1,0 +1,71 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div id="app" v-cloak>
+    <template>
+        <div>
+            <div v-for="post in blogData" v-key="post.id">
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.description }}</p>
+                <button v-on:click="getPage(post.id)" class="btn-danger">Подробнее</button>
+            </div>
+            <p>Current page: {{ currentPage }}</p>
+            <v-pagination v-if="total != 0" v-model="currentPage" :page-count="total" :classes="bootstrapPaginationClasses"
+                  :labels="paginationAnchorTexts"></v-pagination>
+        </div>
+    </template>
+</div>
+<script src="~/js/axios.min.js"></script>
+<script src="//unpkg.com/vue"></script>
+<script  src="//unpkg.com/vue-plain-pagination"></script>
+<script type="module">
+    Vue.component('v-pagination', window['vue-plain-pagination'])
+
+    new Vue({
+        el: '#app',
+        data: {
+            blogData: [],
+            currentPage: 1,
+            total: 9,
+            bootstrapPaginationClasses: {
+                ul: 'pagination',
+                li: 'page-item',
+                liActive: 'active',
+                liDisable: 'disabled',
+                button: 'bg-dark page-link'
+            },
+            paginationAnchorTexts: {
+                first: 'First',
+                prev: 'Previous',
+                next: 'Next',
+                last: 'Last'
+            }
+        },
+        mounted() {
+            this.getPagesInfo();
+        },
+        watch: {
+            currentPage: function (v) {
+                console.log(this.currentPage);
+            }
+        },
+        methods: {
+            getPagesInfo() {
+                let th = this;
+                axios.get('/devblog/GetTotalPages/')
+                    .then(function (response) {
+                        th.total = response.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+            },
+            getPage() {
+                console.log('1');
+            }
+        }
+
+    })
+</script>

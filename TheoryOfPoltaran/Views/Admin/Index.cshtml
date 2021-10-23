@@ -5,30 +5,36 @@
 
 <div class="row">
     <div class="col-md-12">
-        <section id="loginForm">
-            <h5>
-                Создание публикации
-            </h5>
-            <hr />
-            <div class="form-group">
-                <div class="control-label">
-                    <h3>Заголовок</h3>
-                    <div class="col-md-7">
-                        <div class="input-group">
-                            <input class="form-control bg-dark text-light" placeholder="Статеечка..." type="text"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="control-label">
-                    <h3>Описание</h3>
-                    <div class="col-md-8">
-                        <div class="input-group">
-                            <textarea class="form-control input-lg textarea-editor" style="resize:none;width:600px;"></textarea>
-                        </div>
+        <h5>
+            Создание публикации
+        </h5>
+        <hr />
+        <div class="form-group">
+            <div class="control-label">
+                <h3>Заголовок</h3>
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <input class="form-control bg-dark text-light" placeholder="Статеечка..." type="text" />
                     </div>
                 </div>
             </div>
-        </section>
+            <div class="control-label">
+                <h3>Описание</h3>
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <input class="form-control bg-dark text-light" placeholder="Эта статейка об..." type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="control-label">
+                <h3>Содержание</h3>
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <textarea class="form-control input-lg textarea-editor" style="resize:none;width:600px;"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @section Scripts {
@@ -36,7 +42,6 @@
     <script src="summernote-bs5.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
     <script>
-
         $(document).ready(function () {
             // Initialize Editor
             $('.textarea-editor').summernote({

@@ -38,7 +38,7 @@ namespace TheoryOfPoltaran.Controllers
         {
             var user = await _mainContext.Users.FirstOrDefaultAsync();
             if(user != null)
-                return RedirectToAction("Index", "Home");
+                return /*RedirectToAction("Index", "Home")*/NotFound();
             return View();
         }
         [HttpPost]
@@ -78,6 +78,11 @@ namespace TheoryOfPoltaran.Controllers
                     ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
             return View(model);
+        }
+        [Authorize]
+        public async Task<IActionResult> AddPost()
+        {
+            return BadRequest();
         }
         private async Task Authenticate(string userName)
         {

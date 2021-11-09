@@ -10,21 +10,32 @@ namespace TheoryOfPoltaran.Controllers
 {
     public class DevBlogController : Controller
     {
-        private const int PageSize = 5;
-        public int TotalItems => _mainContext.Publications.Count();
+        private const int PageSize = 1;
+        public int TotalItems => _context.Publications.Count();
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / PageSize);
-        private MainContext _mainContext;
+        private MainContext _context;
         public DevBlogController(MainContext mainContext)
         {
-            _mainContext = mainContext;
+            _context = mainContext;
         }
-        public IActionResult Index(int page = 1)
+        public IActionResult Index()
         {
             return View();
         }
-        public int GetTotalPages()
+        public async Task<object> GetPage(int page = 1)
         {
-            return TotalPages;
+            if (page < 1 || page > TotalPages)
+                return null;
+            var data = (await _context.Publications.OrderByDescending(x => x.Date)
+                                                    .Skip((page - 1) * PageSize)
+                                                    .Take(PageSize)
+                                                    .ToListAsync())
+                                                    .Select(x => new { x.Title, x.Description, x.Text, x.Date, });
+            return data;
+        }
+        public object GetFirstData()
+        {
+            return new { TotalPages, ShowBtn = User.Identity.IsAuthenticated };
         }
     }
 }

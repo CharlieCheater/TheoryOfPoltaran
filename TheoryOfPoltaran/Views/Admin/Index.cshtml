@@ -1,46 +1,60 @@
 ﻿@{
     ViewData["Title"] = "Админ панель";
 }
-<link href="~/lib/summernote/summernote-bs5.css" rel="stylesheet">
+@*<link href="~/lib/summernote/summernote-bs5.css" rel="stylesheet">*@
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<div class="app">
 
-<div class="row">
-    <div class="col-md-12">
-        <h5>
-            Создание публикации
-        </h5>
-        <hr />
-        <div class="form-group">
-            <div class="control-label">
-                <h3>Заголовок</h3>
-                <div class="col-md-7">
-                    <div class="input-group">
-                        <input class="form-control bg-dark text-light" placeholder="Статеечка..." type="text" />
+    <div class="row">
+        @Html.AntiForgeryToken()
+        <div class="col-md-12">
+            <h5>
+                Создание публикации
+            </h5>
+            <hr />
+            <div class="form-group">
+                <div class="control-label">
+                    <h3>Заголовок</h3>
+                    <div class="col-md-7">
+                        <div class="input-group">
+                            <input class="post-title form-control bg-dark text-light" placeholder="Статеечка..." type="text" />
+                        </div>
+                        <span id="errTitle" style="color:red;display:none">Это поле обязательное</span>
                     </div>
                 </div>
-            </div>
-            <div class="control-label">
-                <h3>Описание</h3>
-                <div class="col-md-7">
-                    <div class="input-group">
-                        <input class="form-control bg-dark text-light" placeholder="Эта статейка об..." type="text" />
+                <div class="control-label">
+                    <h3>Описание</h3>
+                    <div class="col-md-7">
+                        <div class="input-group">
+                            <input id="pDescription" class="form-control bg-dark text-light" placeholder="Эта статейка об..." type="text" />
+                        </div>
+                        <span id="errDesc" style="color:red;display:none">Это поле обязательное</span>
                     </div>
                 </div>
-            </div>
-            <div class="control-label">
-                <h3>Содержание</h3>
-                <div class="col-md-8">
-                    <div class="input-group">
-                        <textarea class="form-control input-lg textarea-editor" style="resize:none;width:600px;"></textarea>
+                <div class="control-label">
+                    <h3>Содержание</h3>
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <textarea class="form-control input-lg textarea-editor" style="resize:none;width:600px;"></textarea>
+                        </div>
+                        <span id="errValue" style="color: red; display: none">Это поле обязательное</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-4" />
+        <div class="col-sm-2">
+            <input id="btnSubmit" class="btn btn-info" type="submit" value="Принять" />
+        </div>
+        <div class="col-md-4" />
+    </div>
 </div>
+
 @section Scripts {
-    <link href="~/lib/summernote/summernote-bs5.js" rel="stylesheet">
-    <script src="summernote-bs5.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+    <script type="text/javascript" src="~/js/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
     <script>
         $(document).ready(function () {
             // Initialize Editor
@@ -48,9 +62,76 @@
                 height: 300, // set editor height
                 minHeight: null, // set minimum height of editor
                 maxHeight: null, // set maximum height of editor
-                focus: true // set focus to editable area after initializing summernote
+                focus: true, // set focus to editable area after initializing summernote
+
             });
         });
+        //var input = $(".post-title");
 
+        //input.on("input", function () {
+        //    alert(input.val());
+        //});
+        $("#btnSubmit").click(function () {
+            title = $(".post-title").val();
+            description = $('#pDescription').val();
+            value = $('.textarea-editor').summernote('code');
+
+
+            if (validateInputs()) {
+                const formData = new FormData();
+                let dat = {
+                    Title: title,
+                    Description: description,
+                    Text: value
+                }
+                formData.append('PublicationJson', JSON.stringify(dat));
+                axios.post('CreatePost', formData, {
+                    headers: {
+                        RequestVerificationToken: $('[name=__RequestVerificationToken]').val(),
+                    }
+                })
+                    .then(function (response) {
+                        console.log(response.status);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+            }
+
+
+
+        });
+        function validateInputs() {
+            title = $(".post-title").val();
+            description = $('#pDescription').val();
+            value = $('.textarea-editor').summernote('code');
+            flag = true;
+            if (isEmptyOrSpaces(title)) {
+                $('#errTitle').show();
+                flag = false;
+            }
+            else {
+                $('#errTitle').hide();
+            }
+            if (isEmptyOrSpaces(description)) {
+                $('#errDesc').show();
+                flag = false;
+            }
+            else {
+                $('#errDesc').hide();
+            }
+
+            if (isEmptyOrSpaces(value)) {
+                $('#errValue').show();
+                flag = false;
+            }
+            else {
+                $('#errValue').hide();
+            }
+            return flag;
+        }
+        function isEmptyOrSpaces(str) {
+            return (!str || str.length === 0 || /^\s*$/.test(str));
+        }
     </script>
 }  

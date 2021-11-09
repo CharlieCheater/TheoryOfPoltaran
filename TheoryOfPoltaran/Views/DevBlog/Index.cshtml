@@ -6,14 +6,24 @@
 <div id="app" v-cloak>
     <template>
         <div>
+            <p v-html="test"></p>
+            <h1 style="text-align:center;">Дневник разработки</h1>
+            <h2 v-if="blogData.length == 0" style="text-align:center;">На данный момент постов нет</h2>
             <div v-for="post in blogData" v-key="post.id">
-                <h3>{{ post.title }}</h3>
+                <div class="row">
+                    <div class="col">
+                        <h3>{{ post.title }}</h3>
+
+                    </div>
+                    <div class="col col-sm-10">
+                        <button v-if="showBtn" class="btn-danger">Удалить</button>
+                    </div>
+                </div>
                 <p>{{ post.description }}</p>
                 <button v-on:click="getPage(post.id)" class="btn-danger">Подробнее</button>
             </div>
-            <p>Current page: {{ currentPage }}</p>
             <v-pagination v-if="total != 0" v-model="currentPage" :page-count="total" :classes="bootstrapPaginationClasses"
-                  :labels="paginationAnchorTexts"></v-pagination>
+                          :labels="paginationAnchorTexts"></v-pagination>
         </div>
     </template>
 </div>
@@ -29,6 +39,7 @@
             blogData: [],
             currentPage: 1,
             total: 9,
+            showBtn: false,
             bootstrapPaginationClasses: {
                 ul: 'pagination',
                 li: 'page-item',
@@ -48,22 +59,32 @@
         },
         watch: {
             currentPage: function (v) {
-                console.log(this.currentPage);
+                this.getPage(v);
             }
         },
         methods: {
             getPagesInfo() {
                 let th = this;
-                axios.get('/devblog/GetTotalPages/')
+                axios.get('/devblog/GetFirstData/')
                     .then(function (response) {
-                        th.total = response.data;
+                        th.total = response.data.totalPages;
+                        th.showBtn = response.data.showBtn;
+                        th.getPage(th.currentPage);
                     })
                     .catch(function (error) {
                         console.log(error);
                     })
             },
-            getPage() {
-                console.log('1');
+            getPage(pg) {
+                let th = this;
+                axios.get('/devblog/GetPage?page=' + pg)
+                    .then(function (response) {
+                        th.blogData = response.data;
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
             }
         }
 

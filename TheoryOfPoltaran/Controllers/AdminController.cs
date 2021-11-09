@@ -23,6 +23,7 @@ namespace TheoryOfPoltaran.Controllers
         [Authorize]
         public IActionResult Index()
         {
+            var t = _mainContext.Publications.ToList();
             return View();
         }
         [HttpGet]
@@ -79,21 +80,41 @@ namespace TheoryOfPoltaran.Controllers
             }
             return View(model);
         }
+        [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddPost()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePost(CreatePublicationModel model)
         {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var pm = model.GetModel();
+                    Publication publication = new Publication
+                    {
+                        Text = pm.Text,
+                        Title = pm.Title,
+                        Description = pm.Description,
+                        Date = DateTime.Now
+                    };
+                    await _mainContext.Publications.AddAsync(publication);
+                    await _mainContext.SaveChangesAsync();
+                    return Ok();
+                }
+                catch
+                {
+                    return BadRequest();
+                }
+            }
             return BadRequest();
         }
         private async Task Authenticate(string userName)
         {
-            // создаем один claim
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
             };
-            // создаем объект ClaimsIdentity
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 

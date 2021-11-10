@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TheoryOfPoltaran.Models;
+using TheoryOfPoltaran.ViewModels;
 
 namespace TheoryOfPoltaran.Controllers
 {
     public class DevBlogController : Controller
     {
-        private const int PageSize = 1;
+        private const int PageSize = 3;
         public int TotalItems => _context.Publications.Count();
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / PageSize);
         private MainContext _context;
@@ -18,24 +19,37 @@ namespace TheoryOfPoltaran.Controllers
         {
             _context = mainContext;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int pg = 1)
         {
-            return View();
-        }
-        public async Task<object> GetPage(int page = 1)
-        {
-            if (page < 1 || page > TotalPages)
-                return null;
-            var data = (await _context.Publications.OrderByDescending(x => x.Date)
-                                                    .Skip((page - 1) * PageSize)
+            int tp = TotalPages;
+            if (pg < 1 || pg > tp)
+                return NotFound();
+            var posts = (await _context.Publications.OrderByDescending(x => x.Date)
+                                                    .Skip((pg - 1) * PageSize)
                                                     .Take(PageSize)
-                                                    .ToListAsync())
-                                                    .Select(x => new { x.Title, x.Description, x.Text, x.Date, });
-            return data;
+                                                    .ToListAsync());
+            DevBlogDataViewModel data = new DevBlogDataViewModel
+            {
+                CurrentPage = pg,
+                IsAdmin = User.Identity.IsAuthenticated,
+                Publications = posts,
+                TotalPages = tp
+            };
+            return View(data);
         }
-        public object GetFirstData()
+        public async Task<IActionResult> Details(int? id)
         {
-            return new { TotalPages, ShowBtn = User.Identity.IsAuthenticated };
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var post = await _context.Publications.FirstOrDefaultAsync(m => m.Id == id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            return View(post);
         }
     }
 }

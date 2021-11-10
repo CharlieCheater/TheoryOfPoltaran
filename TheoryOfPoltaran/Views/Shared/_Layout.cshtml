@@ -12,11 +12,11 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow border-dark mb-3" >
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow border-dark mb-3">
             <div class="container">
-                    <img src="~/Content/Images/icon.png" width="50" height="50" />
-                <div >
-                    <a style="font-family: ethnocentric;color:white;" class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img style="display: flex; align-items: self-end; " src="~/Content/Images/icon.png" width="50" height="50" />
+                <div>
+                    <a style="font-family: ethnocentric;color:white;display: flex; align-items: self-end;" class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                         <p style="margin-top:20px">Stylua Games</p>
                     </a>
                 </div>
@@ -54,6 +54,7 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)

@@ -23,7 +23,11 @@ namespace TheoryOfPoltaran.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var t = _mainContext.Publications.ToList();
+            return View();
+        }
+        [Authorize]
+        public IActionResult CreatePublication()
+        {
             return View();
         }
         [HttpGet]
@@ -99,7 +103,7 @@ namespace TheoryOfPoltaran.Controllers
                     };
                     await _mainContext.Publications.AddAsync(publication);
                     await _mainContext.SaveChangesAsync();
-                    return Ok();
+                    return Ok(publication.Id);
                 }
                 catch
                 {

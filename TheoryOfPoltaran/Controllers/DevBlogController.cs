@@ -11,7 +11,7 @@ namespace TheoryOfPoltaran.Controllers
 {
     public class DevBlogController : Controller
     {
-        private const int PageSize = 3;
+        private const int PageSize = 10;
         public int TotalItems => _context.Publications.Count();
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / PageSize);
         private MainContext _context;

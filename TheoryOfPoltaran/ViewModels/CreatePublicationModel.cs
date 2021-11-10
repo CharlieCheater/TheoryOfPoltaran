@@ -9,15 +9,9 @@ namespace TheoryOfPoltaran.ViewModels
     public class CreatePublicationModel
     {
         public string PublicationJson { get; set; }
-        public PublicationModel GetModel()
+        public PublicationViewModel GetModel()
         {
-            return JsonConvert.DeserializeObject<PublicationModel>(PublicationJson);
+            return JsonConvert.DeserializeObject<PublicationViewModel>(PublicationJson);
         }
-    }
-    public class PublicationModel
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Text { get; set; }
     }
 }

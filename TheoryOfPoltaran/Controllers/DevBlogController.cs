@@ -23,7 +23,7 @@ namespace TheoryOfPoltaran.Controllers
         {
             int tp = TotalPages;
             if (pg < 1 || pg > tp)
-                return NotFound();
+                pg = 1;
             var posts = (await _context.Publications.OrderByDescending(x => x.Date)
                                                     .Skip((pg - 1) * PageSize)
                                                     .Take(PageSize)
@@ -50,6 +50,27 @@ namespace TheoryOfPoltaran.Controllers
                 return NotFound();
             }
             return View(post);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return NotFound();
+            }
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
+            var post = await _context.Publications.FirstOrDefaultAsync(m => m.Id == id);
+            if (post == null)
+            {
+                return BadRequest();
+            }
+            _context.Publications.Remove(post);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }

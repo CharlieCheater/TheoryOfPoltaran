@@ -5,18 +5,37 @@
 <link rel="stylesheet" href="~/lib/bootstrap-social-5.1.1/bootstrap-social.css" />
 <link rel="stylesheet" href="~/lib/bootstrap-social-5.1.1/assets/css/font-awesome.css" />
 <link rel="stylesheet" href="~/lib/simplePagination/simplePagination.css" />
+<link rel="stylesheet" href="~/lib/sweetalert/dark.css" />
 <div>
+    @if (Model.IsAdmin)
+    {
+        <template id="my-template">
+            <swal-title>
+                Вы точно хотите удалить?
+            </swal-title>
+            <swal-icon type="warning" color="red"></swal-icon>
+            <swal-button type="confirm">
+                Подтвердить
+            </swal-button>
+            <swal-button type="cancel">
+                Отмена
+            </swal-button>
+            <swal-param name="allowEscapeKey" value="false" />
+            <swal-param name="customClass"
+                        value='{ "popup": "my-popup" }' />
+        </template>
+    }
     <h1 style="text-align:center;">Дневник разработки</h1>
     @if (Model.Publications.Count == 0) Html.Raw("<h2 style=\"text - align:center; \">На данный момент постов нет</h2>");
     @foreach (var post in Model.Publications)
     {
-        <div class="card w-75">
+        <div class="card w-75 mx-auto">
             <div class="card-body">
                 <div class="row">
                     <h5 class="col-10 card-title">@post.Title</h5>
                     @if (Model.IsAdmin)
                     {
-                        <a asp-action="Delete" class="btn btn-social-icon btn-social btn-danger"><i class="fa fa-trash-o"></i></a>
+                        <a value="@post.Id" class="deleteBtn btn btn-social-icon btn-social btn-danger"><i class="fa fa-trash-o"></i></a>
                     }
 
                 </div>
@@ -27,52 +46,46 @@
             </div>
         </div>
     }
-    <div id="light-pagination" class="pagination position-absolute start-50 translate-middle" style="margin-top:50px;"></div>
+    <div class="w-100 mx-auto" style="text-align: center; margin-bottom: 20px">
+        <div id="light-pagination" class="pagination position-absolute start-50 translate-middle" style="margin-top: 50px;"></div>
+    </div>
 </div>
 @section Scripts {
-    <script src="~/js/axios.min.js"></script>
     <script src="~/lib/simplePagination/jquery.simplePagination.js"></script>
+    <script src="~/js/axios.min.js"></script>
+    <script src="~/lib/sweetalert/sweetalert2.min.js"></script>
+    @if (Model.IsAdmin)
+    {
+        <script type="text/javascript">
+            $('.deleteBtn').click(async function () {
+                const { value: confirmed } = await Swal.fire({
+                    template: '#my-template'
+                });
+                if (confirmed) {
+                    axios.post('DevBlog/Delete?id=' + $(this).attr('value'))
+                        .then(function (response) {
+                            location.reload();
+                        })
+                    
+                }
+            });
+        </script>
+    }
     <script type="text/javascript">
     $('#light-pagination').pagination({
 
-        // Total number of items that will be used to calculate the pages.
-        //items: 1,
-
-        // Number of items displayed on each page.
-        //itemsOnPage: 1,
-
-        // If specified, items and itemsOnPage will not be used to calculate the number of pages.
         pages: @Model.TotalPages,
 
-        // How many page numbers should be visible while navigating. Minimum allowed: 3 (previous, current & next)
         displayedPages: 5,
-
-        // How many page numbers are visible at the beginning/ending of the pagination.
         edges: 2,
-
-        // Enables start/end edge
         useStartEdge: true,
         useEndEdge: true,
-
-        // Which page will be selected immediately after init.
         currentPage: @Model.CurrentPage,
-
-        // Uses anchor links or spans
         useAnchors: true,
-
-        // A string used to build the href attribute, added before the page number.
         hrefTextPrefix: "#page-",
-
-        // Another string used to build the href attribute, added after the page number.
         hrefTextSuffix: '',
-
-        // Text to be display on the previous button.
         prevText: "&laquo;",
-
-        // Text to be display on the next button.
         nextText: "&raquo;",
-
-        // Ellipse Character
         ellipseText: '&hellip;',
         ellipsePageSet: true,
 

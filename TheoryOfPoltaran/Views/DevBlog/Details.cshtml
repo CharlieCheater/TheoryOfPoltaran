@@ -1,0 +1,12 @@
+﻿@model TheoryOfPoltaran.Models.Publication
+@{
+    ViewData["Title"] = $"{Model.Title}";
+}
+<div>
+    <div class="row">
+        <h1 class="col-9" style="display: flex; align-items: center;margin:0;">@Model.Title</h1>
+        <h3 class="col" style="display: flex; align-items: flex-end;margin:0;">@Model.Date.ToLongDateString()</h3>
+    </div>
+    <hr />
+    @Html.Raw(Model.Text)
+</div>

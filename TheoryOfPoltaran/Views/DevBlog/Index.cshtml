@@ -1,92 +1,100 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TheoryOfPoltaran.ViewModels.DevBlogDataViewModel
 @{
+    ViewData["Title"] = "ДевБлог";
 }
-<div id="app" v-cloak>
-    <template>
-        <div>
-            <p v-html="test"></p>
-            <h1 style="text-align:center;">Дневник разработки</h1>
-            <h2 v-if="blogData.length == 0" style="text-align:center;">На данный момент постов нет</h2>
-            <div v-for="post in blogData" v-key="post.id">
+<link rel="stylesheet" href="~/lib/bootstrap-social-5.1.1/bootstrap-social.css" />
+<link rel="stylesheet" href="~/lib/bootstrap-social-5.1.1/assets/css/font-awesome.css" />
+<link rel="stylesheet" href="~/lib/simplePagination/simplePagination.css" />
+<div>
+    <h1 style="text-align:center;">Дневник разработки</h1>
+    @if (Model.Publications.Count == 0) Html.Raw("<h2 style=\"text - align:center; \">На данный момент постов нет</h2>");
+    @foreach (var post in Model.Publications)
+    {
+        <div class="card w-75">
+            <div class="card-body">
                 <div class="row">
-                    <div class="col">
-                        <h3>{{ post.title }}</h3>
+                    <h5 class="col-10 card-title">@post.Title</h5>
+                    @if (Model.IsAdmin)
+                    {
+                        <a asp-action="Delete" class="btn btn-social-icon btn-social btn-danger"><i class="fa fa-trash-o"></i></a>
+                    }
 
-                    </div>
-                    <div class="col col-sm-10">
-                        <button v-if="showBtn" class="btn-danger">Удалить</button>
-                    </div>
                 </div>
-                <p>{{ post.description }}</p>
-                <button v-on:click="getPage(post.id)" class="btn-danger">Подробнее</button>
+                <h6 class="card-subtitle mb-2 text-muted">@post.Date.ToLongDateString()</h6>
+                <p class="card-text">@post.Description</p>
+                <a asp-action="Details" asp-route-id="@post.Id" class="card-link link-danger">Подробнее</a>
+                @*<a href="#" class="card-link">Another link</a>*@
             </div>
-            <v-pagination v-if="total != 0" v-model="currentPage" :page-count="total" :classes="bootstrapPaginationClasses"
-                          :labels="paginationAnchorTexts"></v-pagination>
         </div>
-    </template>
+    }
+    <div id="light-pagination" class="pagination position-absolute start-50 translate-middle" style="margin-top:50px;"></div>
 </div>
-<script src="~/js/axios.min.js"></script>
-<script src="//unpkg.com/vue"></script>
-<script  src="//unpkg.com/vue-plain-pagination"></script>
-<script type="module">
-    Vue.component('v-pagination', window['vue-plain-pagination'])
+@section Scripts {
+    <script src="~/js/axios.min.js"></script>
+    <script src="~/lib/simplePagination/jquery.simplePagination.js"></script>
+    <script type="text/javascript">
+    $('#light-pagination').pagination({
 
-    new Vue({
-        el: '#app',
-        data: {
-            blogData: [],
-            currentPage: 1,
-            total: 9,
-            showBtn: false,
-            bootstrapPaginationClasses: {
-                ul: 'pagination',
-                li: 'page-item',
-                liActive: 'active',
-                liDisable: 'disabled',
-                button: 'bg-dark page-link'
-            },
-            paginationAnchorTexts: {
-                first: 'First',
-                prev: 'Previous',
-                next: 'Next',
-                last: 'Last'
-            }
-        },
-        mounted() {
-            this.getPagesInfo();
-        },
-        watch: {
-            currentPage: function (v) {
-                this.getPage(v);
-            }
-        },
-        methods: {
-            getPagesInfo() {
-                let th = this;
-                axios.get('/devblog/GetFirstData/')
-                    .then(function (response) {
-                        th.total = response.data.totalPages;
-                        th.showBtn = response.data.showBtn;
-                        th.getPage(th.currentPage);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    })
-            },
-            getPage(pg) {
-                let th = this;
-                axios.get('/devblog/GetPage?page=' + pg)
-                    .then(function (response) {
-                        th.blogData = response.data;
+        // Total number of items that will be used to calculate the pages.
+        //items: 1,
 
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    })
-            }
+        // Number of items displayed on each page.
+        //itemsOnPage: 1,
+
+        // If specified, items and itemsOnPage will not be used to calculate the number of pages.
+        pages: @Model.TotalPages,
+
+        // How many page numbers should be visible while navigating. Minimum allowed: 3 (previous, current & next)
+        displayedPages: 5,
+
+        // How many page numbers are visible at the beginning/ending of the pagination.
+        edges: 2,
+
+        // Enables start/end edge
+        useStartEdge: true,
+        useEndEdge: true,
+
+        // Which page will be selected immediately after init.
+        currentPage: @Model.CurrentPage,
+
+        // Uses anchor links or spans
+        useAnchors: true,
+
+        // A string used to build the href attribute, added before the page number.
+        hrefTextPrefix: "#page-",
+
+        // Another string used to build the href attribute, added after the page number.
+        hrefTextSuffix: '',
+
+        // Text to be display on the previous button.
+        prevText: "&laquo;",
+
+        // Text to be display on the next button.
+        nextText: "&raquo;",
+
+        // Ellipse Character
+        ellipseText: '&hellip;',
+        ellipsePageSet: true,
+
+        // list style
+        listStyle: '',
+
+        // The class of the CSS theme:
+        // "light-theme", "compact-theme", and "dark-theme"
+        cssStyle: "dark-theme",
+
+        // Set to false if you don't want to select the page immediately after click.
+        selectOnClick: true,
+
+        // Next button at front.
+        nextAtFront: false,
+
+        // Inverts page order
+        invertPageOrder: false,
+        onPageClick: function (pageNumber, event) {
+            window.location.href = "devblog?pg=" + pageNumber;
         }
 
-    })
-</script>
+    });
+    </script>
+}
